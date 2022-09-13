@@ -23,13 +23,13 @@ def random_configuration(D):
     q_rand = [x,y]
     return q_rand
 
-def nearest_vertex(q_rand, G):
+def nearest_vertex(q_rand, points):
     closestdist = 100
-    for i,a in enumerate(G):
+    for i,a in enumerate(points):
         dist = np.sqrt((q_rand[0]-a[0])**2 + (q_rand[1] - a[1])**2)
         if dist < closestdist:
             closestdist = dist
-            q_near = G[i]
+            q_near = points[i]
     return q_near
 
                     
@@ -69,10 +69,10 @@ def new_configuration(q_near, q_rand, delta):
 
     q_new = [x_new, y_new]
 
-    G.append(q_new)
+    points.append(q_new)
 
     """Parent is the q_near, child is the q_new"""
-    parents.append([q_near,q_new])
+    G.append([q_near,q_new])
 
     #"""Child is the key, parent is the value in this dictionary"""
     #parents.update(q_new = q_near) 
@@ -80,9 +80,7 @@ def new_configuration(q_near, q_rand, delta):
 
     return q_new
         
-        
-
-parents = []
+G = []        
 
 q_init = [50,50]
 delta = 1
@@ -101,13 +99,13 @@ print(diction)
 # print(dista)
 
 
-G = [q_init]
+points = [q_init]
 node = Graph(q_init, delta, K, D)
 #segs = []
 
 while node.K > 0:
     q_rand = random_configuration(node.D)
-    q_near = nearest_vertex(q_rand, G)
+    q_near = nearest_vertex(q_rand, points)
     q_new = new_configuration(q_near, q_rand, node.delta)
     node.K-=1
     #segs.append()
@@ -121,7 +119,7 @@ ax.set_xlim(node.D[0][0],node.D[0][1])
 ax.set_ylim(node.D[1][0],node.D[1][1])
 #seg1 = [q_init, (51,50)]
 #seg2 = [(43, 44), (22, 60)]
-lc = LineCollection(parents)
+lc = LineCollection(G)
 ax.add_collection(lc)
 plt.show()
 
