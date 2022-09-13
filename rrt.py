@@ -32,7 +32,7 @@ def nearest_vertex(q_rand, points):
             q_near = points[i]
     return q_near
 
-                    
+         
 def new_configuration(q_near, q_rand, delta):
     print(q_rand)
     print(q_near)
@@ -79,12 +79,16 @@ def new_configuration(q_near, q_rand, delta):
     
 
     return q_new
+
+def circle_obstacles(radius):
+    
+    
         
 G = []        
 
 q_init = [50,50]
 delta = 1
-K = 500
+K = 50
 D = [[0,100],[0,100]]
 
 diction = {1: [0,2], 2: [4,3]}
