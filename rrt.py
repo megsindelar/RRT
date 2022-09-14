@@ -7,6 +7,8 @@ from re import X
 from turtle import circle
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
+import matplotlib.patches as patches
+from matplotlib.patches import Circle
 import numpy as np
 
 
@@ -26,27 +28,27 @@ def random_configuration(D):
 
 def nearest_vertex(q_rand, points, exclude):
     closestdist = 100
-    past = []
+    #past = []
     for i,a in enumerate(points):
         dist = np.sqrt((q_rand[0]-a[0])**2 + (q_rand[1] - a[1])**2)
         if dist < closestdist:
             closestdist = dist
             q_near = points[i]
             close_i = i
-        past.append([points[i]])
-    print(past)
+    #     past.append([points[i]])
+    # print(past)
     #print(exclude)
-    if exclude > 0:
-        past.sort()
-        if len(past) > 1:
-            q_near = past[exclude]
-            q_near = q_near[0]
-            print("q_near more items in list")
-            print(q_near)
-        else:
-            q_near = points[close_i]
-            print("q_near 1 item in list")
-            print(q_near)
+    # if exclude > 0:
+    #     past.sort()
+    #     if len(past) > 1:
+    #         q_near = past[exclude]
+    #         q_near = q_near[0]
+    #         print("q_near more items in list")
+    #         print(q_near)
+    #     else:
+    #         q_near = points[close_i]
+    #         print("q_near 1 item in list")
+    #         print(q_near)
     return q_near
 
          
@@ -56,11 +58,11 @@ def new_configuration(q_near, q_rand, delta, circle_points):
     #print(q_near)
 
     #unit vector
-    print("start")
-    print(q_rand)
-    print(q_near)
+    #print("start")
+    #print(q_rand)
+    #print(q_near)
     vector = np.subtract(q_rand, q_near)
-    print(vector)
+    #print(vector)
     #vector = vector[0]
     #print(vector)
     vector = [vector[0], vector[1]]
@@ -71,56 +73,88 @@ def new_configuration(q_near, q_rand, delta, circle_points):
 
     x = delta*uv_x
     y = delta*uv_y
+    print(x, y)
+    x_new = q_near[0] + x
+    y_new = q_near[1] + y 
+    # #print(q_near)
+    # if q_near[0] > 0 and q_near[1] > 0:
+    #     """First quadrant"""
+    #     x_new = q_near[0] + x
+    #     y_new = q_near[1] + y  
 
-    print(q_near)
-    if q_near[0] > 0 and q_near[1] > 0:
-        """First quadrant"""
-        x_new = q_near[0] + x
-        y_new = q_near[1] + y  
+    # elif q_near[0] < 0 and q_near[1] > 0:
+    #     """Second quadrant"""
+    #     x_new = q_near[0] - x
+    #     y_new = q_near[1] + y
 
-    elif q_near[0] < 0 and q_near[1] > 0:
-        """Second quadrant"""
-        x_new = q_near[0] - x
-        y_new = q_near[1] + y
+    # elif q_near[0] < 0 and q_near[1] < 0:
+    #     """Third quadrant"""
+    #     x_new = q_near[0] - x
+    #     y_new = q_near[1] - y
 
-    elif q_near[0] < 0 and q_near[1] < 0:
-        """Third quadrant"""
-        x_new = q_near[0] - x
-        y_new = q_near[1] - y
-
-    else:
-        """Fourth quadrant"""
-        x_new = q_near[0] + x
-        y_new = q_near[1] - y
+    # else:
+    #     """Fourth quadrant"""
+    #     x_new = q_near[0] + x
+    #     y_new = q_near[1] - y
 
     q_new = [x_new, y_new]
 
-    m = (q_new[1]-q_near[1])/(q_new[0]-q_near[0])
+    intersection = 0
+    # for a in range(len(circle_points)):
+    #     for i in range(len(circle_points[a])):
+    #         min_x = q_near[0]
+    #         max_x = q_new[0]
+    #         min_y = q_near[1]
+    #         max_y = q_new[1]
+    #         print(min_x, max_x, circle_points[a][i][0])
+    #         print(min_y, max_y, circle_points[a][i][1])
 
-    for i in range(len(circle_points)):
-        y = m*(circle_points[i][0]-q_near[0]) + q_near[1]
-        #print(circle_points[i][1] - 0.5)
-        if (circle_points[i][1] - 0.15) <= y <= (circle_points[i][1] + 0.15):
-            """Line intersects with an obstacle"""
-            print("intersection")
-            q_near_new = nearest_vertex(q_rand, points, count)
+    """check if point is in the circle"""
+    for a in range(len(circle_points)):
+        rnge = circ_pts[a][0]
+        center = circ_pts[a][1]
+        distan = np.sqrt((q_new[0] - center[0])**2 + (q_new[1] - center[1])**2)
+        if distan <= rnge:
+            print("q_new inside circle")
+            intersection = 1
+            stop = 0
+            return stop
+            #if (min_x <= circle_points[a][i][0] <= max_x) and (min_y <= circle_points[a][i][1] <= max_y):
+                # """Circle point is in the area"""
+            
+                # m = (q_new[1]-q_near[1])/(q_new[0]-q_near[0])
+                # y = m*(circle_points[a][i][0]-q_near[0]) + q_near[1]
+                # print(y)
+                # print(circle_points[a][i][1] - 0.5)
+                # print(circle_points[a][i][1] + 0.5)
+                # print(circle_points[a][i][0])
+                # print(q_near[0])
+                # if ((circle_points[a][i][1] - 0.5) <= y <= (circle_points[a][i][1] + 0.5)):
+                #     """Line intersects with (or close enough to) an obstacle"""
+                #     print(min_x, max_x, circle_points[a][i][0])
+                #     print(min_y, max_y, circle_points[a][i][1])
+                #     print("intersection")
+                #     intersection = 1
+            #q_near_new = nearest_vertex(q_rand, points, count)
             #print(q_near_new)
-            count+=1
-            q__new_new = new_configuration(q_near_new, q_rand, delta, circle_points)
-        else:
-            count = 1
+            #count+=1
+            #q__new_new = new_configuration(q_near_new, q_rand, delta, circle_points)
+        #else:
+            #count = 1
+                    # stop = 0
+                    # return stop
+    if intersection != 1:
+        points.append(q_new)
 
-
-    points.append(q_new)
-
-    """Parent is the q_near, child is the q_new"""
-    G.append([q_near,q_new])
-
-    #"""Child is the key, parent is the value in this dictionary"""
-    #parents.update(q_new = q_near) 
+        """Parent is the q_near, child is the q_new"""
+        G.append([q_near,q_new])
+        return q_new
+    if goal == 1:
+        print("Reached goal!")
+        return 0
     
-
-    return q_new
+#def circle_obstacles(radius, center):
+#    circle = patches.Circle()  
 
 def circle_obstacles(radius, center):
     # circle_pts = []
@@ -134,7 +168,7 @@ def circle_obstacles(radius, center):
     #     circle_pts.append([x,y_2])
     # print(circle_pts)
     # return circle_pts
-    angle = np.linspace(0, 2*np.pi, 10)
+    angle = np.linspace(0, 2*np.pi, 50)
     x = radius*np.cos(angle) + center[0]
     y = radius*np.sin(angle) + center[1]
     l = len(x)
@@ -143,12 +177,13 @@ def circle_obstacles(radius, center):
     for i in range(len(x)):
         pt.append([x[i],y[i]])
     return pt
-        
+
+
 G = []        
 
 q_init = [50,50]
 delta = 1
-K = 50
+K = 500
 D = [[0,100],[0,100]]
 
 diction = {1: [0,2], 2: [4,3]}
@@ -170,14 +205,29 @@ exclude = 0
 global count
 count = 1
 #segs = []
+cent1 = [80,80]
+cent2 = [20,20]
+cent3 = [70,10]
 
-cent = [60,60]
-circ_pts = circle_obstacles(10,cent)
+#circ_pts1 = circle_obstacles(10,cent1)
+#circ_pts2 = circle_obstacles(5,cent2)
+#circ_pts3 = circle_obstacles(3, cent3)
+
+circ_pts1 = [10, cent1]
+circ_pts2 = [5, cent2]
+circ_pts = [circ_pts1, circ_pts2]#, circ_pts3]
+circle_pts1 = circle_obstacles(10, cent1)
+circle_pts2 = circle_obstacles(5, cent2)
+circle_pts = [circle_pts1, circle_pts2]#, circ_pts3]
+print(circ_pts)
+
 
 while node.K > 0:
     q_rand = random_configuration(node.D)
     q_near = nearest_vertex(q_rand, points, exclude)
     q_new = new_configuration(q_near, q_rand, node.delta, circ_pts)
+    if q_new == 0:
+        break
     node.K-=1
     #segs.append()
 #print(G)
@@ -196,11 +246,12 @@ ax.set_ylim(node.D[1][0],node.D[1][1])
 #seg2 = [(43, 44), (22, 60)]
 lc = LineCollection(G)
 ax.add_collection(lc)
-for i in range(len(circ_pts)):
-    #print(circ_pts[i])
-    x_c = circ_pts[i][0]
-    y_c = circ_pts[i][1]
-    plt.plot(x_c, y_c, 'ro')
+for a in range(len(circle_pts)):
+    for i in range(len(circle_pts[a])):
+        #print(circle_pts[a][i])
+        x_c = circle_pts[a][i][0]
+        y_c = circle_pts[a][i][1]
+        plt.plot(x_c, y_c, 'ro')
 
 plt.show()
 
