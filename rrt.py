@@ -33,9 +33,9 @@ def nearest_vertex(q_rand, points):
     return q_near
 
          
-def new_configuration(q_near, q_rand, delta):
-    print(q_rand)
-    print(q_near)
+def new_configuration(q_near, q_rand, delta, circle_points):
+    #print(q_rand)
+    #print(q_near)
 
     #unit vector
     vector = np.subtract(q_rand, q_near)
@@ -80,9 +80,27 @@ def new_configuration(q_near, q_rand, delta):
 
     return q_new
 
-def circle_obstacles(radius):
-    
-    
+def circle_obstacles(radius, center):
+    # circle_pts = []
+    # x_range = [center[0]-radius, center[0]+radius]
+    # print(x_range)
+    # for x in range(x_range[0], x_range[1]+1):
+    #     print(x)
+    #     y_1 = (np.sqrt(radius**2 - (x-center[0])**2)) + center[1]
+    #     y_2 = -(np.sqrt(radius**2 - (x-center[0])**2)) + center[1]
+    #     circle_pts.append([x,y_1])
+    #     circle_pts.append([x,y_2])
+    # print(circle_pts)
+    # return circle_pts
+    angle = np.linspace(0, 2*np.pi, 150)
+    x = radius*np.cos(angle) + center[0]
+    y = radius*np.sin(angle) + center[1]
+    l = len(x)
+    #print(l)
+    pt = []
+    for i in range(len(x)):
+        pt.append([x[i],y[i]])
+    return pt
         
 G = []        
 
@@ -92,7 +110,7 @@ K = 50
 D = [[0,100],[0,100]]
 
 diction = {1: [0,2], 2: [4,3]}
-print(diction)
+#print(diction)
 
 # lst = []
 # dista = {}
@@ -107,12 +125,19 @@ points = [q_init]
 node = Graph(q_init, delta, K, D)
 #segs = []
 
+cent = [60,60]
+circ_pts = circle_obstacles(10,cent)
+
 while node.K > 0:
     q_rand = random_configuration(node.D)
     q_near = nearest_vertex(q_rand, points)
-    q_new = new_configuration(q_near, q_rand, node.delta)
+    q_new = new_configuration(q_near, q_rand, node.delta, circ_pts)
     node.K-=1
     #segs.append()
+#print(G)
+
+
+#print(circ_pts)
 
 # for i,val in enumerate(parents):
 #     parent_dict = 
@@ -125,7 +150,14 @@ ax.set_ylim(node.D[1][0],node.D[1][1])
 #seg2 = [(43, 44), (22, 60)]
 lc = LineCollection(G)
 ax.add_collection(lc)
+for i in range(len(circ_pts)):
+    print(circ_pts[i])
+    x_c = circ_pts[i][0]
+    y_c = circ_pts[i][1]
+    plt.plot(x_c, y_c, 'ro')
+
 plt.show()
+
 
 
 
