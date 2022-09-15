@@ -208,11 +208,19 @@ def new_configuration(q_near, q_rand, delta, circle_points):
             points.append(q_new)
             G.append([q_near, q_new])
             print("Reached goal!")
-            path = []
-            for a in reversed(range(len(G))):
-                if G[a][0] == G[a-1][1]:
-                    """If the child of the vertex on the path is the parent of the previous vertex on the path"""
-                    path.append([G[a][1],G[a-1][1]])
+            path = [[q_new, q_near]]
+            for a in reversed(range(len(G)-1)):
+                path_ind = len(path)
+                print(path[path_ind-1][1])
+                print(f"G:  {G[a]}")
+                print(f"G0:  {G[a][0]}")
+                if path[path_ind-1][1] == G[a][1]:
+                #if G[a-1][1] == G[a][0]:
+                    """If the child's parent of the vertex is the same as the child of the next vertex on the path"""
+                    path.append([G[a][1], G[a][0]])
+                    #path.append([G[a-1][0],G[a][1]])
+                    #prev = G[a+1][1]
+            #path.append([prev, goal])
             print(path)
             reached_goal = 1
             return 0
@@ -332,7 +340,9 @@ ax.set_ylim(node.D[1][0],node.D[1][1])
 #seg2 = [(43, 44), (22, 60)]
 lc = LineCollection(G)
 #ax.add_collection(lc)
+ax.plot(q_init[0], q_init[1], 'go')
 ax.plot(goal[0], goal[1], "ro")
+
 
 if reached_goal == 1:
     plt_path = LineCollection(path)
