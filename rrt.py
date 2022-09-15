@@ -26,7 +26,8 @@ def random_configuration(D):
     q_rand = [x,y]
     return q_rand
 
-def nearest_vertex(q_rand, points, exclude):
+def nearest_vertex(q_rand, exclude):
+    global points
     closestdist = 100
     #past = []
     for i,a in enumerate(points):
@@ -53,7 +54,7 @@ def nearest_vertex(q_rand, points, exclude):
 
          
 def new_configuration(q_near, q_rand, delta, circle_points):
-    global count, goal
+    global count, goal, points, reached_goal
     #print(q_rand)
     #print(q_near)
 
@@ -73,7 +74,7 @@ def new_configuration(q_near, q_rand, delta, circle_points):
 
     x = delta*uv_x
     y = delta*uv_y
-    print(x, y)
+    #print(x, y)
     x_new = q_near[0] + x
     y_new = q_near[1] + y 
     # #print(q_near)
@@ -152,7 +153,8 @@ def new_configuration(q_near, q_rand, delta, circle_points):
         x_dist = abs(q_new[0] - goal[0])
         y_dist = abs(q_new[1] - goal[1])
         c = np.sqrt(x_dist**2 + y_dist**2)
-        while c <= 5 and intersection == 0:
+        print(c)
+        while 1 < c <= 5 and intersection == 0:
             q_rand = goal
 
             closestdist = 100
@@ -163,7 +165,7 @@ def new_configuration(q_near, q_rand, delta, circle_points):
                     closestdist = dist
                     q_near = points[i]
                     close_i = i
-
+            print(f"near:{q_near}")
             vector = np.subtract(q_rand, q_near)
             vector = [vector[0], vector[1]]
             vector_mag = np.sqrt((vector[0]**2 + vector[1]**2))
@@ -173,7 +175,7 @@ def new_configuration(q_near, q_rand, delta, circle_points):
 
             x = delta*uv_x
             y = delta*uv_y
-            print(x, y)
+            #print(x, y)
             x_new = q_near[0] + x
             y_new = q_near[1] + y 
             q_new = [x_new, y_new]
@@ -195,12 +197,17 @@ def new_configuration(q_near, q_rand, delta, circle_points):
 
             x_dist = abs(q_new[0] - goal[0])
             y_dist = abs(q_new[1] - goal[1])
+            #print(x_dist,y_dist)
             c = np.sqrt(x_dist**2 + y_dist**2)
+            print(c)
             
         if c <= 1:
+            q_near = q_new
             q_new = goal
             points.append(q_new)
+            G.append([q_near, q_new])
             print("Reached goal!")
+            reached_goal = 1
             return 0
 
         return q_new
@@ -246,7 +253,7 @@ diction = {1: [0,2], 2: [4,3]}
 #print(diction)
 
 global goal
-goal = [80,85]
+goal = [80,80]
 
 # lst = []
 # dista = {}
@@ -256,13 +263,17 @@ goal = [80,85]
 # lst = sorted(dist.keys())
 # print(dista)
 
-
+global points
 points = [q_init]
 node = Graph(q_init, delta, K, D)
 exclude = 0
 
 global count
 count = 1
+global reached_goal
+reached_goal = 0
+
+
 #segs = []
 cent1 = [65,65]
 cent2 = [20,20]
@@ -287,10 +298,10 @@ print(circle_pts)
 
 while node.K > 0:
     q_rand = random_configuration(node.D)
-    q_near = nearest_vertex(q_rand, points, exclude)
+    q_near = nearest_vertex(q_rand, exclude)
     q_new = new_configuration(q_near, q_rand, node.delta, circ_pts)
-    #if q_new == 0:
-    #    break
+    if reached_goal == 1:
+        break
     node.K-=1
     #segs.append()
 #print(G)
