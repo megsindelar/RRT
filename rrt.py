@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 import matplotlib.patches as patches
 from matplotlib.patches import Circle
+from matplotlib import colors as mcolors
 import numpy as np
 
 
@@ -54,7 +55,7 @@ def nearest_vertex(q_rand, exclude):
 
          
 def new_configuration(q_near, q_rand, delta, circle_points):
-    global count, goal, points, reached_goal
+    global count, goal, points, reached_goal, path
     #print(q_rand)
     #print(q_near)
 
@@ -207,6 +208,12 @@ def new_configuration(q_near, q_rand, delta, circle_points):
             points.append(q_new)
             G.append([q_near, q_new])
             print("Reached goal!")
+            path = []
+            for a in reversed(range(len(G))):
+                if G[a][0] == G[a-1][1]:
+                    """If the child of the vertex on the path is the parent of the previous vertex on the path"""
+                    path.append([G[a][1],G[a-1][1]])
+            print(path)
             reached_goal = 1
             return 0
 
@@ -254,6 +261,9 @@ diction = {1: [0,2], 2: [4,3]}
 
 global goal
 goal = [80,80]
+
+global path
+path = []
 
 # lst = []
 # dista = {}
@@ -313,14 +323,21 @@ while node.K > 0:
 #     parent_dict = 
 # print(parents)
 
+
+"""Plotting"""
 fig, ax = plt.subplots()
 ax.set_xlim(node.D[0][0],node.D[0][1])
 ax.set_ylim(node.D[1][0],node.D[1][1])
 #seg1 = [q_init, (51,50)]
 #seg2 = [(43, 44), (22, 60)]
 lc = LineCollection(G)
-ax.add_collection(lc)
+#ax.add_collection(lc)
 ax.plot(goal[0], goal[1], "ro")
+
+if reached_goal == 1:
+    plt_path = LineCollection(path)
+    ax.add_collection(plt_path)
+
 for a in range(len(circle_pts)):
     ax.add_patch(circle_pts[a])
 #     for i in range(len(circle_pts[a])):
