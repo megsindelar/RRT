@@ -53,7 +53,7 @@ def nearest_vertex(q_rand, points, exclude):
 
          
 def new_configuration(q_near, q_rand, delta, circle_points):
-    global count
+    global count, goal
     #print(q_rand)
     #print(q_near)
 
@@ -117,8 +117,8 @@ def new_configuration(q_near, q_rand, delta, circle_points):
         if distan <= rnge:
             print("q_new inside circle")
             intersection = 1
-            stop = 0
-            return stop
+            #stop = 0
+            #return stop
             #if (min_x <= circle_points[a][i][0] <= max_x) and (min_y <= circle_points[a][i][1] <= max_y):
                 # """Circle point is in the area"""
             
@@ -148,10 +148,63 @@ def new_configuration(q_near, q_rand, delta, circle_points):
 
         """Parent is the q_near, child is the q_new"""
         G.append([q_near,q_new])
+
+        x_dist = abs(q_new[0] - goal[0])
+        y_dist = abs(q_new[1] - goal[1])
+        c = np.sqrt(x_dist**2 + y_dist**2)
+        while c <= 5 and intersection == 0:
+            q_rand = goal
+
+            closestdist = 100
+            #past = []
+            for i,a in enumerate(points):
+                dist = np.sqrt((q_rand[0]-a[0])**2 + (q_rand[1] - a[1])**2)
+                if dist < closestdist:
+                    closestdist = dist
+                    q_near = points[i]
+                    close_i = i
+
+            vector = np.subtract(q_rand, q_near)
+            vector = [vector[0], vector[1]]
+            vector_mag = np.sqrt((vector[0]**2 + vector[1]**2))
+            uv_x = vector[0]/vector_mag
+            uv_y = vector[1]/vector_mag
+            uv = [uv_x, uv_y]
+
+            x = delta*uv_x
+            y = delta*uv_y
+            print(x, y)
+            x_new = q_near[0] + x
+            y_new = q_near[1] + y 
+            q_new = [x_new, y_new]
+            
+            intersection = 0
+
+            for a in range(len(circle_points)):
+                rnge = circ_pts[a][0]
+                center = circ_pts[a][1]
+                distan = np.sqrt((q_new[0] - center[0])**2 + (q_new[1] - center[1])**2)
+                if distan <= rnge:
+                    print("q_new inside circle")
+                    intersection = 1
+
+            points.append(q_new)
+
+            """Parent is the q_near, child is the q_new"""
+            G.append([q_near,q_new])
+
+            x_dist = abs(q_new[0] - goal[0])
+            y_dist = abs(q_new[1] - goal[1])
+            c = np.sqrt(x_dist**2 + y_dist**2)
+            
+        if c <= 1:
+            q_new = goal
+            points.append(q_new)
+            print("Reached goal!")
+            return 0
+
         return q_new
-    if goal == 1:
-        print("Reached goal!")
-        return 0
+ 
     
 #def circle_obstacles(radius, center):
 #    circle = patches.Circle()  
@@ -166,6 +219,9 @@ def circle_obstacles(radius, center):
     #     y_2 = -(np.sqrt(radius**2 - (x-center[0])**2)) + center[1]
     #     circle_pts.append([x,y_1])
     #     circle_pts.append([x,y_2])
+
+    
+
     # print(circle_pts)
     # return circle_pts
     angle = np.linspace(0, 2*np.pi, 50)
@@ -183,11 +239,14 @@ G = []
 
 q_init = [50,50]
 delta = 1
-K = 500
+K = 1000
 D = [[0,100],[0,100]]
 
 diction = {1: [0,2], 2: [4,3]}
 #print(diction)
+
+global goal
+goal = [80,85]
 
 # lst = []
 # dista = {}
@@ -205,7 +264,7 @@ exclude = 0
 global count
 count = 1
 #segs = []
-cent1 = [80,80]
+cent1 = [65,65]
 cent2 = [20,20]
 cent3 = [70,10]
 
@@ -213,21 +272,25 @@ cent3 = [70,10]
 #circ_pts2 = circle_obstacles(5,cent2)
 #circ_pts3 = circle_obstacles(3, cent3)
 
-circ_pts1 = [10, cent1]
+circ_pts1 = [5, cent1]
 circ_pts2 = [5, cent2]
 circ_pts = [circ_pts1, circ_pts2]#, circ_pts3]
-circle_pts1 = circle_obstacles(10, cent1)
-circle_pts2 = circle_obstacles(5, cent2)
-circle_pts = [circle_pts1, circle_pts2]#, circ_pts3]
-print(circ_pts)
+#circle_pts1 = circle_obstacles(10, cent1)
+#circle_pts2 = circle_obstacles(5, cent2)
+#circle_pts = [circle_pts1, circle_pts2]#, circ_pts3]
+circle_pts1 = Circle(cent1, 5)
+#print(circle_pts1)
+circle_pts2 = Circle(cent2, 5)
+circle_pts = [circle_pts1, circle_pts2]
+print(circle_pts)
 
 
 while node.K > 0:
     q_rand = random_configuration(node.D)
     q_near = nearest_vertex(q_rand, points, exclude)
     q_new = new_configuration(q_near, q_rand, node.delta, circ_pts)
-    if q_new == 0:
-        break
+    #if q_new == 0:
+    #    break
     node.K-=1
     #segs.append()
 #print(G)
@@ -246,12 +309,14 @@ ax.set_ylim(node.D[1][0],node.D[1][1])
 #seg2 = [(43, 44), (22, 60)]
 lc = LineCollection(G)
 ax.add_collection(lc)
+ax.plot(goal[0], goal[1], "ro")
 for a in range(len(circle_pts)):
-    for i in range(len(circle_pts[a])):
-        #print(circle_pts[a][i])
-        x_c = circle_pts[a][i][0]
-        y_c = circle_pts[a][i][1]
-        plt.plot(x_c, y_c, 'ro')
+    ax.add_patch(circle_pts[a])
+#     for i in range(len(circle_pts[a])):
+#         #print(circle_pts[a][i])
+#         x_c = circle_pts[a][i][0]
+#         y_c = circle_pts[a][i][1]
+#         plt.plot(x_c, y_c, 'ro')
 
 plt.show()
 
@@ -260,5 +325,8 @@ plt.show()
 
 
 
-
+#############
+#need:
+### goal state
+### read task 2 to get algorithm
 
