@@ -301,15 +301,19 @@ cent3 = [70,10]
 #circ_pts2 = circle_obstacles(5,cent2)
 #circ_pts3 = circle_obstacles(3, cent3)
 
+"""Create random circles"""
+#random_radius = 
+#random_center = 
+
 circ_pts1 = [5, cent1]
 circ_pts2 = [5, cent2]
 circ_pts = [circ_pts1, circ_pts2]#, circ_pts3]
 #circle_pts1 = circle_obstacles(10, cent1)
 #circle_pts2 = circle_obstacles(5, cent2)
 #circle_pts = [circle_pts1, circle_pts2]#, circ_pts3]
-circle_pts1 = Circle(cent1, 5)
+circle_pts1 = Circle(cent1, 5, color = 'black')
 #print(circle_pts1)
-circle_pts2 = Circle(cent2, 5)
+circle_pts2 = Circle(cent2, 5, color = 'black')
 circle_pts = [circle_pts1, circle_pts2]
 print(circle_pts)
 
@@ -339,17 +343,18 @@ ax.set_ylim(node.D[1][0],node.D[1][1])
 #seg1 = [q_init, (51,50)]
 #seg2 = [(43, 44), (22, 60)]
 lc = LineCollection(G)
-#ax.add_collection(lc)
+ax.add_collection(lc)
 ax.plot(q_init[0], q_init[1], 'go')
 ax.plot(goal[0], goal[1], "ro")
 
 
 if reached_goal == 1:
-    plt_path = LineCollection(path)
+    plt_path = LineCollection(path, color = 'red')
     ax.add_collection(plt_path)
 
 for a in range(len(circle_pts)):
     ax.add_patch(circle_pts[a])
+    
 #     for i in range(len(circle_pts[a])):
 #         #print(circle_pts[a][i])
 #         x_c = circle_pts[a][i][0]
