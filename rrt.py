@@ -3,6 +3,8 @@
 ##############################################
 
 from math import dist, hypot
+from random import random
+from random import randint
 from re import X
 from turtle import circle
 import matplotlib.pyplot as plt
@@ -26,6 +28,40 @@ def random_configuration(D):
     y = np.random.randint(D[1][0], D[1][1])
     q_rand = [x,y]
     return q_rand
+
+"""Create random circles"""
+def circles():
+    i = randint(0,15)
+    circ_pts = []
+    while i > 0:
+        center_x = randint(15,85)
+        center_y = randint(15,85)
+        center = [center_x, center_y]
+        radius = randint(0,15)
+        circ_pts.append([radius, center])
+        i -= 1
+    return circ_pts
+
+def print_circles(circ_pts):
+    circle_pts = []
+    for a in range(len(circ_pts)):
+        circle_pts1 = Circle(circ_pts[a][1], circ_pts[a][0], color = 'black')
+        circle_pts.append(circle_pts1)
+    return circle_pts
+
+    # cent1 = [65,65]
+    # cent2 = [20,20]
+    # cent3 = [70,10]
+
+
+    # circ_pts1 = [5, cent1]
+    # circ_pts2 = [5, cent2]
+    # circ_pts = [circ_pts1, circ_pts2]#, circ_pts3]
+
+    # circle_pts1 = Circle(cent1, 5, color = 'black')
+    # circle_pts2 = Circle(cent2, 5, color = 'black')
+    # circle_pts = [circle_pts1, circle_pts2]
+    # print(circle_pts)
 
 def nearest_vertex(q_rand, exclude):
     global points
@@ -228,34 +264,6 @@ def new_configuration(q_near, q_rand, delta, circle_points):
         return q_new
  
     
-#def circle_obstacles(radius, center):
-#    circle = patches.Circle()  
-
-def circle_obstacles(radius, center):
-    # circle_pts = []
-    # x_range = [center[0]-radius, center[0]+radius]
-    # print(x_range)
-    # for x in range(x_range[0], x_range[1]+1):
-    #     print(x)
-    #     y_1 = (np.sqrt(radius**2 - (x-center[0])**2)) + center[1]
-    #     y_2 = -(np.sqrt(radius**2 - (x-center[0])**2)) + center[1]
-    #     circle_pts.append([x,y_1])
-    #     circle_pts.append([x,y_2])
-
-    
-
-    # print(circle_pts)
-    # return circle_pts
-    angle = np.linspace(0, 2*np.pi, 50)
-    x = radius*np.cos(angle) + center[0]
-    y = radius*np.sin(angle) + center[1]
-    l = len(x)
-    #print(l)
-    pt = []
-    for i in range(len(x)):
-        pt.append([x[i],y[i]])
-    return pt
-
 
 G = []        
 
@@ -292,30 +300,24 @@ global reached_goal
 reached_goal = 0
 
 
-#segs = []
-cent1 = [65,65]
-cent2 = [20,20]
-cent3 = [70,10]
+# cent1 = [65,65]
+# cent2 = [20,20]
+# cent3 = [70,10]
 
-#circ_pts1 = circle_obstacles(10,cent1)
-#circ_pts2 = circle_obstacles(5,cent2)
-#circ_pts3 = circle_obstacles(3, cent3)
 
-"""Create random circles"""
-#random_radius = 
-#random_center = 
+# circ_pts1 = [5, cent1]
+# circ_pts2 = [5, cent2]
+# circ_pts = [circ_pts1, circ_pts2]#, circ_pts3]
 
-circ_pts1 = [5, cent1]
-circ_pts2 = [5, cent2]
-circ_pts = [circ_pts1, circ_pts2]#, circ_pts3]
-#circle_pts1 = circle_obstacles(10, cent1)
-#circle_pts2 = circle_obstacles(5, cent2)
-#circle_pts = [circle_pts1, circle_pts2]#, circ_pts3]
-circle_pts1 = Circle(cent1, 5, color = 'black')
-#print(circle_pts1)
-circle_pts2 = Circle(cent2, 5, color = 'black')
-circle_pts = [circle_pts1, circle_pts2]
-print(circle_pts)
+# circle_pts1 = Circle(cent1, 5, color = 'black')
+# circle_pts2 = Circle(cent2, 5, color = 'black')
+# circle_pts = [circle_pts1, circle_pts2]
+# print(circle_pts)
+
+circ_pts = []
+circle_pts = []
+circ_pts = circles()
+circle_pts = print_circles(circ_pts)
 
 
 while node.K > 0:
@@ -325,15 +327,6 @@ while node.K > 0:
     if reached_goal == 1:
         break
     node.K-=1
-    #segs.append()
-#print(G)
-
-
-#print(circ_pts)
-
-# for i,val in enumerate(parents):
-#     parent_dict = 
-# print(parents)
 
 
 """Plotting"""
