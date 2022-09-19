@@ -29,6 +29,20 @@ def random_configuration(D):
     q_rand = [x,y]
     return q_rand
 
+def random_start(circle_points):
+    q_init_x = randint(0,100)
+    q_init_y = randint(0,100)
+    q_init = [q_init_x, q_init_y]
+
+    return q_init
+
+def random_goal(circle_points):
+    goal_x = randint(0,100)
+    goal_y = randint(0,100)
+    goal = [goal_x, goal_y]
+
+    return goal
+
 """Create random circles"""
 def circles():
     i = randint(0,15)
@@ -49,44 +63,18 @@ def print_circles(circ_pts):
         circle_pts.append(circle_pts1)
     return circle_pts
 
-    # cent1 = [65,65]
-    # cent2 = [20,20]
-    # cent3 = [70,10]
-
-
-    # circ_pts1 = [5, cent1]
-    # circ_pts2 = [5, cent2]
-    # circ_pts = [circ_pts1, circ_pts2]#, circ_pts3]
-
-    # circle_pts1 = Circle(cent1, 5, color = 'black')
-    # circle_pts2 = Circle(cent2, 5, color = 'black')
-    # circle_pts = [circle_pts1, circle_pts2]
-    # print(circle_pts)
 
 def nearest_vertex(q_rand, exclude):
     global points
     closestdist = 100
-    #past = []
+    q_near = 0
     for i,a in enumerate(points):
         dist = np.sqrt((q_rand[0]-a[0])**2 + (q_rand[1] - a[1])**2)
         if dist < closestdist:
             closestdist = dist
             q_near = points[i]
             close_i = i
-    #     past.append([points[i]])
-    # print(past)
-    #print(exclude)
-    # if exclude > 0:
-    #     past.sort()
-    #     if len(past) > 1:
-    #         q_near = past[exclude]
-    #         q_near = q_near[0]
-    #         print("q_near more items in list")
-    #         print(q_near)
-    #     else:
-    #         q_near = points[close_i]
-    #         print("q_near 1 item in list")
-    #         print(q_near)
+
     return q_near
 
          
@@ -114,26 +102,6 @@ def new_configuration(q_near, q_rand, delta, circle_points):
     #print(x, y)
     x_new = q_near[0] + x
     y_new = q_near[1] + y 
-    # #print(q_near)
-    # if q_near[0] > 0 and q_near[1] > 0:
-    #     """First quadrant"""
-    #     x_new = q_near[0] + x
-    #     y_new = q_near[1] + y  
-
-    # elif q_near[0] < 0 and q_near[1] > 0:
-    #     """Second quadrant"""
-    #     x_new = q_near[0] - x
-    #     y_new = q_near[1] + y
-
-    # elif q_near[0] < 0 and q_near[1] < 0:
-    #     """Third quadrant"""
-    #     x_new = q_near[0] - x
-    #     y_new = q_near[1] - y
-
-    # else:
-    #     """Fourth quadrant"""
-    #     x_new = q_near[0] + x
-    #     y_new = q_near[1] - y
 
     q_new = [x_new, y_new]
 
@@ -155,32 +123,7 @@ def new_configuration(q_near, q_rand, delta, circle_points):
         if distan <= rnge:
             print("q_new inside circle")
             intersection = 1
-            #stop = 0
-            #return stop
-            #if (min_x <= circle_points[a][i][0] <= max_x) and (min_y <= circle_points[a][i][1] <= max_y):
-                # """Circle point is in the area"""
             
-                # m = (q_new[1]-q_near[1])/(q_new[0]-q_near[0])
-                # y = m*(circle_points[a][i][0]-q_near[0]) + q_near[1]
-                # print(y)
-                # print(circle_points[a][i][1] - 0.5)
-                # print(circle_points[a][i][1] + 0.5)
-                # print(circle_points[a][i][0])
-                # print(q_near[0])
-                # if ((circle_points[a][i][1] - 0.5) <= y <= (circle_points[a][i][1] + 0.5)):
-                #     """Line intersects with (or close enough to) an obstacle"""
-                #     print(min_x, max_x, circle_points[a][i][0])
-                #     print(min_y, max_y, circle_points[a][i][1])
-                #     print("intersection")
-                #     intersection = 1
-            #q_near_new = nearest_vertex(q_rand, points, count)
-            #print(q_near_new)
-            #count+=1
-            #q__new_new = new_configuration(q_near_new, q_rand, delta, circle_points)
-        #else:
-            #count = 1
-                    # stop = 0
-                    # return stop
     if intersection != 1:
         points.append(q_new)
 
@@ -267,7 +210,37 @@ def new_configuration(q_near, q_rand, delta, circle_points):
 
 G = []        
 
-q_init = [50,50]
+global goal
+goal = [80,80]
+
+global path
+path = []
+
+circ_pts = []
+circle_pts = []
+circ_pts = circles()
+circle_pts = print_circles(circ_pts)
+
+
+q_init = random_start(circ_pts)
+for a in range(len(circ_pts)):
+    rnge = circ_pts[a][0]
+    center = circ_pts[a][1]
+    distan = np.sqrt((q_init[0] - center[0])**2 + (q_init[1] - center[1])**2)
+    if distan <= rnge:
+        random_start(circ_pts)
+        a = 0
+
+goal = random_goal(circ_pts)
+for a in range(len(circ_pts)):
+    rnge = circ_pts[a][0]
+    center = circ_pts[a][1]
+    distan = np.sqrt((goal[0] - center[0])**2 + (goal[1] - center[1])**2)
+    if distan <= rnge:
+        random_goal(circ_pts)
+        a = 0
+
+#q_init = [50,50]
 delta = 1
 K = 1000
 D = [[0,100],[0,100]]
@@ -275,19 +248,6 @@ D = [[0,100],[0,100]]
 diction = {1: [0,2], 2: [4,3]}
 #print(diction)
 
-global goal
-goal = [80,80]
-
-global path
-path = []
-
-# lst = []
-# dista = {}
-# dist = {1:2, 2:4, 3:1}
-# print(dist.items())
-# dista = dict(sorted(dist.items(), key=lambda item:item[1]))
-# lst = sorted(dist.keys())
-# print(dista)
 
 global points
 points = [q_init]
@@ -299,25 +259,6 @@ count = 1
 global reached_goal
 reached_goal = 0
 
-
-# cent1 = [65,65]
-# cent2 = [20,20]
-# cent3 = [70,10]
-
-
-# circ_pts1 = [5, cent1]
-# circ_pts2 = [5, cent2]
-# circ_pts = [circ_pts1, circ_pts2]#, circ_pts3]
-
-# circle_pts1 = Circle(cent1, 5, color = 'black')
-# circle_pts2 = Circle(cent2, 5, color = 'black')
-# circle_pts = [circle_pts1, circle_pts2]
-# print(circle_pts)
-
-circ_pts = []
-circle_pts = []
-circ_pts = circles()
-circle_pts = print_circles(circ_pts)
 
 
 while node.K > 0:
