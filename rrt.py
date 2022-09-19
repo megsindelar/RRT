@@ -3,6 +3,7 @@
 ##############################################
 
 from math import dist, hypot
+from operator import le
 from random import random
 from random import randint
 from re import X
@@ -12,7 +13,15 @@ from matplotlib.collections import LineCollection
 import matplotlib.patches as patches
 from matplotlib.patches import Circle
 from matplotlib import colors as mcolors
+import matplotlib.image as image
 import numpy as np
+import cv2
+from PIL import Image
+
+"""Convert image to black and white"""
+img = Image.open("Northwestern_logo.png")
+img = img.convert('1')
+img.save('BW_NU_logo.png')
 
 
 class Graph:
@@ -294,6 +303,8 @@ for a in range(len(circle_pts)):
 #         x_c = circle_pts[a][i][0]
 #         y_c = circle_pts[a][i][1]
 #         plt.plot(x_c, y_c, 'ro')
+
+
 
 plt.show()
 
